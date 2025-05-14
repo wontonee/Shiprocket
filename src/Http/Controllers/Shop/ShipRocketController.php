@@ -1,12 +1,12 @@
 <?php
 
-namespace Wontonee\ShipRocket\Http\Controllers\Shop;
+namespace Wontonee\Shiprocket\Http\Controllers\Shop;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
-class ShipRocketController extends Controller
+class ShiprocketController extends Controller
 {
     use DispatchesJobs, ValidatesRequests;
 

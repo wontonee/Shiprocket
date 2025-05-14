@@ -2,22 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ✅ Always keep @font-face outside @layer */
+@font-face {
+  font-family: 'icomoon';
+  src: url('../fonts/icomoon.woff2') format('woff2'),
+       url('../fonts/icomoon.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ✅ Keep raw CSS rules like pseudo-elements outside @layer too */
+.icon-rocket::before {
+  content: "\e9a5";
+  font-family: 'icomoon';
+  display: inline-block;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ✅ Inside @layer ONLY use Tailwind-aware selectors */
 @layer components {
-    .temp-icon {
-        width: 48px;
-        height: 48px;
-        display: inline-block;
-        background-size: cover;
-        background-image: url("../images/icon-temp.svg");
-    }
-
-    .active {
-        .temp-icon {
-            background-image: url("../images/icon-temp-active.svg");
-        }
-
-        &.temp-icon {
-            background-image: url("../images/icon-temp-active.svg");
-        }
-    }
+  html.dark [class^="icon-"],
+  html.dark [class*=" icon-"] {
+    color: #d1d5db;
+  }
 }

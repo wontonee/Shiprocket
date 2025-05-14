@@ -1,6 +1,6 @@
 <?php
 
-namespace Wontonee\ShipRocket\Providers;
+namespace Wontonee\Shiprocket\Providers;
 
 use Konekt\Concord\BaseModuleServiceProvider;
 

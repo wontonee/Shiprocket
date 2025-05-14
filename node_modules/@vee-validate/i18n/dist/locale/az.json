@@ -1,0 +1,29 @@
+{
+  "code": "az",
+  "messages": {
+    "alpha": "{field} yalnız hərflərdən ibarət olmalıdır",
+    "alpha_num": "{field} yalnız rəqəmlərdən ibarət ola bilər",
+    "alpha_dash": "{field} yalnız hərflər, rəqəmlər və defisdən ibarət ola bilər",
+    "alpha_spaces": "{field} yalnız rəqəmlərdən və ara simvolundan (space) ibarət ola bilər",
+    "between": "{field} yalnız 0:{min} və 1:{max} arası ola bilər",
+    "confirmed": "{field} təsdiqləməsi yalnışdır",
+    "digits": "{field} 0:{length} rəqəmdən ibarət olmalıdır",
+    "dimensions": "{field} ölçüsü 0:{width}x1:{height} piksel olmalıdır",
+    "email": "{field} düzgün formatda daxil olunmalıdır",
+    "not_one_of": "{field} göstəricisi yalnışdır",
+    "ext": "{field} düzgün fayl formatında olmalıdır",
+    "image": "{field} şəkil olmalıdır",
+    "integer": "{field} göstəricisi tam ədəd olmalıdır",
+    "max_value": "{field} göstəricisi ən çox 0:{max} və ya daha az olmalıdır",
+    "max": "{field} uzunluğu ən çox 0:{length} simvoldan ibarət ola bilər",
+    "mimes": "{field} formatı yalnışdır",
+    "min_value": "{field} göstəricisi minimum 0:{min} və ya daha çox olmalıdır",
+    "min": "{field} uzunluğu ən az 0:{length} simvoldan ibarət olmalıdır",
+    "numeric": "{field} yalnız rəqəmlərdən ibarət olmalıdır",
+    "one_of": "{field} göstəricisi yalnışdır",
+    "regex": "{field} formatı yalnışdır",
+    "required": "{field} əlavə etmək zəruridir",
+    "required_if": "{field} əlavə etmək zəruridir",
+    "size": "{field} həcmi 0:{size}KB və daha az olmalıdır"
+  }
+}

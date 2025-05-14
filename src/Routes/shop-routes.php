@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Wontonee\ShipRocket\Http\Controllers\Shop\ShipRocketController;
+use Wontonee\Shiprocket\Http\Controllers\Shop\ShiprocketController;
 
 Route::group(['middleware' => ['web', 'theme', 'locale', 'currency'], 'prefix' => 'shiprocket'], function () {
-    Route::get('', [ShipRocketController::class, 'index'])->name('shop.shiprocket.index');
+    Route::get('', [ShiprocketController::class, 'index'])->name('shop.shiprocket.index');
 });

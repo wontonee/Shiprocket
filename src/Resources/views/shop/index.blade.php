@@ -2,10 +2,10 @@
 
     <!-- Title of the page -->
     <x-slot:title>
-        Package ShipRocket
+        Package Shiprocket
     </x-slot>
 
     <div class="main">
-        Package ShipRocket
+        Package Shiprocket
     </div>
 </x-shop::layouts>

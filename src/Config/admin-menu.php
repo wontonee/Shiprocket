@@ -2,26 +2,38 @@
 
 return [
     [
-        'key'    => 'shiprocket',
-        'name'   => 'ShipRocket',
-        'route'  => 'admin.shiprocket.index', // Ensure this route exists
-        'sort'   => 3,
-        'icon'   => 'icon-shipment', // Icon representing a rocket (symbolizing fast shipping)
+        'key'   => 'shiprocket',
+        'name'  => 'shiprocket::app.admin.menu.shiprocket',
+        'route' => 'admin.shiprocket.index',
+        'sort'  => 2,
+        'icon'  => 'icon-rocket',
     ],
     [
-        'key'    => 'shiprocket.settings',
-        'name'   => 'Settings',
-        'route'  => 'admin.shiprocket.settings', // Verify this route exists
-        'sort'   => 1,
-        'icon'   => 'icon-settings', // Standard settings icon
-        'parent' => 'shiprocket',
+        'key'        => 'shiprocket.shipment',
+        'name'       => 'shiprocket::app.admin.menu.shipment',
+        'route'      => 'admin.shiprocket.shipment',
+        'sort'       => 1,
+        'icon' => '',
     ],
-    [
-        'key'    => 'shiprocket.shipment',
-        'name'   => 'Shipment',
-        'route'  => 'admin.shiprocket.shipment', // Verify this route exists
-        'sort'   => 2,
-        'icon'   => 'icon-truck', // Truck icon indicating shipment/delivery
-        'parent' => 'shiprocket',
-    ],
+      [ 
+        'key'        => 'shiprocket.channel',
+        'name'       => 'shiprocket::app.admin.menu.channel',
+        'route'      => 'admin.shiprocket.channel',
+        'sort'       => 2,
+        'icon' => '',
+      ],
+      [
+        'key'        => 'shiprocket.pickup',
+        'name'       => 'shiprocket::app.admin.menu.pickup',
+        'route'      => 'admin.shiprocket.pickup',
+        'sort'       => 3,
+        'icon' => '',
+      ],
+     [
+        'key'        => 'shiprocket.settings',
+        'name'       => 'shiprocket::app.admin.menu.settings',
+        'route'      => 'admin.shiprocket.settings',
+        'sort'       => 4,
+        'icon' => '',
+    ]
 ];

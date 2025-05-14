@@ -1,11 +1,12 @@
 <?php
 
-namespace Wontonee\ShipRocket\Providers;
+namespace Wontonee\Shiprocket\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 
-class ShipRocketServiceProvider extends ServiceProvider
+class ShiprocketServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
@@ -14,6 +15,8 @@ class ShipRocketServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+       
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->loadRoutesFrom(__DIR__ . '/../Routes/admin-routes.php');
@@ -24,21 +27,24 @@ class ShipRocketServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'shiprocket');
 
-        Event::listen('bagisto.admin.layout.head', function($viewRenderEventManager) {
+          $this->publishes([
+           __DIR__ . '/../Resources/assets' => public_path('themes/shiprocket/default/build'),
+          ], 'public');
+
+        // Publish fonts & css
+      //  $this->publishes([
+        //    __DIR__ . '/../Resources/assets/fonts' => public_path('vendor/shiprocket/fonts'),
+          //  __DIR__ . '/../Resources/assets/css'   => public_path('vendor/shiprocket/css'),
+      //  ], 'public');
+
+
+        Event::listen('bagisto.admin.layout.head.after', function ($viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('shiprocket::admin.layouts.style');
+            
         });
 
-        // Debug: Log all menu items to find the correct parent key
-        \Event::listen('menu.build.after', function (&$menuItems) {
-            \Log::info('Bagisto Menu Items:', $menuItems);
-            $menuItems[] = [
-                'key'      => 'shiprocket-settings',
-                'name'     => 'Shiprocket Settings',
-                'route'    => 'admin.shiprocket.settings',
-                'sort'     => 99,
-                'icon'     => 'temp-icon',
-                'parent'   => 'system', // Still trying 'system' as parent
-            ];
+        Event::listen('bagisto.admin.sales.order.page_action.after', function ($viewRenderEventManager) {
+            $viewRenderEventManager->addTemplate('shiprocket::admin.sales.orders.shiprocket-button-template');
         });
     }
 
@@ -60,11 +66,13 @@ class ShipRocketServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/admin-menu.php', 'menu.admin'
+            dirname(__DIR__) . '/Config/admin-menu.php',
+            'menu.admin'
         );
 
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/acl.php', 'acl'
+            dirname(__DIR__) . '/Config/acl.php',
+            'acl'
         );
     }
 }
