@@ -72,13 +72,18 @@ class PickupController extends Controller
             }
         }
 
-        $currentPickupId =  CoreConfig::where('code', 'shiprocket.shipping.pickup_location_id')->first();
-        $currentPickupId = (int) $currentPickupId->value;
+        // Get current pickup ID and name from core settings
+        $currentPickupId = CoreConfig::where('code', 'shiprocket.shipping.pickup_location_id')->first();
+        $currentPickupId = !empty($currentPickupId) ? (int) $currentPickupId->value : null;
+        
+        $currentPickupName = CoreConfig::where('code', 'shiprocket.shipping.pickup_location_name')->first();
+        $currentPickupName = !empty($currentPickupName) ? $currentPickupName->value : '';
 
-        return view('shiprocket::admin.shiprocket-pickup', [
+        return view('shiprocket::admin.pickup.index', [
             'apiConfigured' => true,
             'pickupLocations' => $pickupLocations,
-            'currentPickupId' => $currentPickupId
+            'currentPickupId' => $currentPickupId,
+            'currentPickupName' => $currentPickupName
         ]);
     }
 
@@ -91,18 +96,30 @@ class PickupController extends Controller
     public function savePickupLocation(Request $request)
     {
         $request->validate([
-            'pickup_location_id' => 'required|numeric'
+            'pickup_location_id' => 'required|numeric',
+            'pickup_location_name' => 'required|string'
         ]);
 
         $pickupLocationId = $request->input('pickup_location_id');
+        $pickupLocationName = $request->input('pickup_location_name');
 
-        // Save to core config
-        $coreConfig = CoreConfig::updateOrCreate(
+        // Save to core config - save both ID and name
+        CoreConfig::updateOrCreate(
             [
                 'code' => 'shiprocket.shipping.pickup_location_id'
             ],
             [
                 'value' => $pickupLocationId
+            ]
+        );
+        
+        // Save name separately
+        CoreConfig::updateOrCreate(
+            [
+                'code' => 'shiprocket.shipping.pickup_location_name'
+            ],
+            [
+                'value' => $pickupLocationName
             ]
         );
 

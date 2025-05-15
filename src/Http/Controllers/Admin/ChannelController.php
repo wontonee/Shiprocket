@@ -75,7 +75,7 @@ class ChannelController extends Controller
         $currentChannelId = CoreConfig::where('code', 'shiprocket.shipping.channel_id')->first();
         $currentChannelId = !empty($currentChannelId) ? (string) $currentChannelId->value : '';
         
-        return view('shiprocket::admin.shiprocket-channel', [
+        return view('shiprocket::admin.channel.index', [
             'apiConfigured' => true,
             'channels' => $channels,
             'currentChannelId' => $currentChannelId

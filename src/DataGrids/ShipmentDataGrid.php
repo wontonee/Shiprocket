@@ -240,7 +240,7 @@ class ShipmentDataGrid extends DataGrid
             'title'  => 'View',
             'method' => 'GET',
             'url'    => function ($row) {
-                return route('admin.shiprocket.orders.view', $row->shiprocket_order_id);
+                return route('admin.shiprocket.shipment.view', $row->shiprocket_order_id);
             },
         ]);
     }

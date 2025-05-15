@@ -4,13 +4,28 @@ return [
     [
         'key'   => 'shiprocket',
         'name'  => 'shiprocket::app.admin.menu.shiprocket',
-        'route' => 'admin.shiprocket.index',
+        'route' => 'admin.shiprocket.shipment',
         'sort'  => 2,
         'icon'  => 'icon-rocket',
     ],
     [
         'key'        => 'shiprocket.shipment',
         'name'       => 'shiprocket::app.admin.menu.shipment',
+        'route'      => 'admin.shiprocket.shipment',
+        'sort'       => 1,
+        'icon' => '',
+    ],
+    [
+        'key'    => 'shiprocket.shipment.view',
+        'name'   => 'View Shipment',
+        'route'  => 'admin.shiprocket.shipment',
+        'sort'   => 2,
+        'icon'   => '',  // optional
+    ],
+    
+     [
+        'key'        => 'shiprocket.courier',
+        'name'       => 'shiprocket::app.admin.menu.courier',
         'route'      => 'admin.shiprocket.shipment',
         'sort'       => 1,
         'icon' => '',

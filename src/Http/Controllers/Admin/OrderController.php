@@ -13,6 +13,7 @@ use Wontonee\Shiprocket\Models\ShiprocketOrder;
 use Wontonee\Shiprocket\Sdk\Client\Client;
 use Webkul\Core\Models\CoreConfig;
 
+
 class OrderController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -55,9 +56,9 @@ class OrderController extends Controller
     public function create($orderId)
     {
 
-    
+
         $order = $this->orderRepository->findOrFail($orderId);
-        
+
         // Check if already sent to Shiprocket
         if (ShiprocketOrder::where('order_id', $orderId)->exists()) {
             session()->flash('error', __('shiprocket::app.admin.orders.already-sent-error'));
@@ -78,7 +79,7 @@ class OrderController extends Controller
 
         // Prepare order data for Shiprocket
         $orderData = $this->prepareOrderData($order);
-        
+
         // For debugging - dump the order data to the screen
         // Uncomment the lines below for debugging
         /*
@@ -91,10 +92,10 @@ class OrderController extends Controller
         
         exit; // Stop execution here for debugging
         */
-        
+
         // Create order in Shiprocket
         $response = $client->orders->createadhocorder($orderData);
-        
+
         if (isset($response['order_id'])) {
             // Create local record of Shiprocket order
             ShiprocketOrder::create([
@@ -103,11 +104,12 @@ class OrderController extends Controller
                 'status' => $response['status'] ?? 'NEW',
             ]);
 
+
             session()->flash('success', __('shiprocket::app.admin.orders.create-success'));
         } else {
             // Format detailed error message if available
             $errorMessage = $response['message'] ?? 'Unknown error';
-            
+
             // Check if there are field-specific errors
             if (isset($response['errors']) && is_array($response['errors'])) {
                 $errorMessage .= '<br><br><strong>Error Details:</strong><br>';
@@ -121,7 +123,7 @@ class OrderController extends Controller
                     }
                 }
             }
-            
+
             // Log the error response with detailed information
             \Log::error('Shiprocket Order Creation Failed', [
                 'order_id' => $orderId,
@@ -147,18 +149,18 @@ class OrderController extends Controller
     {
         // First try to find the order by Bagisto order_id
         $shiprocketOrder = ShiprocketOrder::where('order_id', $orderId)->first();
-        
+
         // If not found, check if it's a Shiprocket order ID
         if (!$shiprocketOrder) {
             $shiprocketOrder = ShiprocketOrder::where('shiprocket_order_id', $orderId)->first();
         }
-        
+
         // If still not found, show error
         if (!$shiprocketOrder) {
             session()->flash('error', __('shiprocket::app.admin.orders.not-found'));
             return redirect()->back();
         }
-        
+
         // Get the Bagisto order using the order_id from ShiprocketOrder
         $order = $this->orderRepository->findOrFail($shiprocketOrder->order_id);
 
@@ -186,7 +188,7 @@ class OrderController extends Controller
         try {
             // Find the local Shiprocket order
             $shiprocketOrder = ShiprocketOrder::where('order_id', $orderId)->firstOrFail();
-            
+
             // Get Shiprocket API credentials
             $apiUsername = optional(CoreConfig::where('code', 'shiprocket.api_username')->first())->value;
             $apiPassword = optional(CoreConfig::where('code', 'shiprocket.api_password')->first())->value;
@@ -198,40 +200,41 @@ class OrderController extends Controller
 
             // Initialize Shiprocket client
             $client = new Client($apiUsername, $apiPassword);
-            
+
             // Ensure we have a clean order ID (convert objects to strings if needed)
-            $shipRocketOrderId = is_object($shiprocketOrder->shiprocket_order_id) 
-                ? $shiprocketOrder->shiprocket_order_id->__toString() 
+            $shipRocketOrderId = is_object($shiprocketOrder->shiprocket_order_id)
+                ? $shiprocketOrder->shiprocket_order_id->__toString()
                 : $shiprocketOrder->shiprocket_order_id;
-                
+
             // Make sure it's a clean value - ensure it's a string and has only numeric characters
             $cleanOrderId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketOrderId));
-            
+
             // Log what we're doing to help with debugging
-            \Log::info("Cancelling order with ID: {$cleanOrderId} (original: " . json_encode($shiprocketOrder->shiprocket_order_id) . ")");
-            
+            //   \Log::info("Cancelling order with ID: {$cleanOrderId} (original: " . json_encode($shiprocketOrder->shiprocket_order_id) . ")");
+
             // Prepare order ID for cancellation - the SDK expects an array of IDs directly
             $orderIds = [$cleanOrderId];
-            
+
             // Call the cancelorder method from the SDK
             $response = $client->orders->cancelorder($orderIds);
-            
-            if (isset($response['message']) && $response['message'] === 'Order cancelled successfully') {
-                // Update local order status
-                $shiprocketOrder->status = 'CANCELED';
-                $shiprocketOrder->save();
-                
-                // Update shipment status in the database if it exists
-                if ($shiprocketOrder->shiprocket_shipment_id) {
-                    // If we have a shipment ID stored, update its status
-                    $shiprocketOrder->update(['status' => 'CANCELED']);
+
+
+            if ($response['status_code'] == 200) {
+                if (isset($response['is_duplicate_request']) && $response['message'] == 'Order cancelled successfully.') {
+                    $shiprocketOrder->status = 'CANCELED';
+                    $shiprocketOrder->update();
+                    session()->flash('error', __('shiprocket::app.admin.orders.duplicate-request'));
+                    return redirect()->back();
+                } else {
+                    // Update local order status
+                    $shiprocketOrder->status = 'CANCELED';
+                    $shiprocketOrder->update();
+                    session()->flash('success', __('shiprocket::app.admin.orders.cancel-success'));
                 }
-                
-                session()->flash('success', __('shiprocket::app.admin.orders.cancel-success'));
             } else {
                 session()->flash('error', $response['message'] ?? __('shiprocket::app.admin.orders.cancel-error'));
             }
-            
+
             return redirect()->back();
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
@@ -262,7 +265,7 @@ class OrderController extends Controller
         // Prepare item data
         $items = [];
         $totalWeight = 0;
-        
+
         foreach ($order->items as $item) {
             // Skip if this is not a physical product
             if ($item->type == 'virtual' || $item->type == 'downloadable') {
@@ -274,7 +277,7 @@ class OrderController extends Controller
             if ($item->product && $item->product->weight) {
                 $weightPerUnit = $item->product->weight;
             }
-            
+
             $totalWeight += ($weightPerUnit * $item->qty_ordered);
 
             $items[] = [
@@ -297,8 +300,10 @@ class OrderController extends Controller
         $paymentMethod = 'Prepaid';
         if ($order->payment && $order->payment->method) {
             // Map Bagisto payment methods to Shiprocket payment methods
-            if (strpos($order->payment->method, 'cashon') !== false || 
-                strpos($order->payment->method, 'cod') !== false) {
+            if (
+                strpos($order->payment->method, 'cashon') !== false ||
+                strpos($order->payment->method, 'cod') !== false
+            ) {
                 $paymentMethod = 'COD';
             }
         }
@@ -309,7 +314,7 @@ class OrderController extends Controller
         if (empty($billingPostcode)) {
             $billingPostcode = '110001'; // Default pincode if empty
         }
-        
+
         $shippingPostcode = preg_replace('/[^0-9]/', '', $shippingAddress->postcode);
         if (empty($shippingPostcode)) {
             $shippingPostcode = '110001'; // Default pincode if empty
@@ -320,14 +325,14 @@ class OrderController extends Controller
         if (empty($billingAddressLine)) {
             $billingAddressLine = 'Default Billing Address, New Delhi';
         }
-        
+
         $billingAddress2 = trim($billingAddress->address2);
-        
+
         $shippingAddressLine = trim($shippingAddress->address1);
         if (empty($shippingAddressLine)) {
             $shippingAddressLine = 'Default Shipping Address, New Delhi';
         }
-        
+
         $shippingAddress2 = trim($shippingAddress->address2);
 
         // Default city, state and country if empty
@@ -335,27 +340,27 @@ class OrderController extends Controller
         if (empty($billingCity)) {
             $billingCity = 'New Delhi';
         }
-        
+
         $billingState = $billingAddress->state;
         if (empty($billingState)) {
             $billingState = 'Delhi';
         }
-        
+
         $billingCountry = $billingAddress->country;
         if (empty($billingCountry)) {
             $billingCountry = 'India';
         }
-        
+
         $shippingCity = $shippingAddress->city;
         if (empty($shippingCity)) {
             $shippingCity = 'New Delhi';
         }
-        
+
         $shippingState = $shippingAddress->state;
         if (empty($shippingState)) {
             $shippingState = 'Delhi';
         }
-        
+
         $shippingCountry = $shippingAddress->country;
         if (empty($shippingCountry)) {
             $shippingCountry = 'India';
@@ -372,7 +377,7 @@ class OrderController extends Controller
         } elseif (strlen($billingPhone) < 10) {
             $billingPhone = str_pad($billingPhone, 10, '9', STR_PAD_LEFT); // Pad with 9's if shorter
         }
-        
+
         $shippingPhone = preg_replace('/[^0-9]/', '', $shippingAddress->phone);
         // Ensure it's exactly 10 digits - truncate or pad as needed
         if (strlen($shippingPhone) > 10) {
@@ -385,17 +390,39 @@ class OrderController extends Controller
         if (empty($billingPhone)) {
             $billingPhone = '9999999999';
         }
-        
+
         if (empty($shippingPhone)) {
             $shippingPhone = '9999999999';
         }
+
+        // Get the current channel ID from core settings
+
+        $currentChannelId = CoreConfig::where('code', 'shiprocket.shipping.channel_id')->first();
+
+        if (!empty($currentChannelId)) {
+            $currentChannelId = (string) $currentChannelId->value;
+        } else {
+            session()->flash('error', __('shiprocket::app.admin.orders.channel-missing'));
+            return redirect()->back();
+        }
+
+        // check the pickup location
+        $pickupLocation = CoreConfig::where('code', 'shiprocket.shipping.pickup_location_name')->first();
+        if (!empty($pickupLocation)) {
+            $pickupLocation = (string) $pickupLocation->value;
+        } else {
+            session()->flash('error', __('shiprocket::app.admin.orders.pickup-location-missing'));
+            return redirect()->back();
+        }
+
+
 
         // Prepare order data for Shiprocket according to their API documentation
         $orderData = [
             'order_id' => (string)$order->increment_id,
             'order_date' => $order->created_at->format('Y-m-d H:i'),
             'pickup_location' => 'work',
-            'channel_id' => '6935085',
+            'channel_id' => $currentChannelId,
             'comment' => 'Order from ' . config('app.name'),
             'billing_customer_name' => $billingNameParts['first_name'],
             'billing_last_name' => $billingNameParts['last_name'],
@@ -452,7 +479,7 @@ class OrderController extends Controller
     protected function splitName($fullName)
     {
         $parts = explode(' ', trim($fullName), 2);
-        
+
         return [
             'first_name' => $parts[0],
             'last_name' => isset($parts[1]) ? $parts[1] : ''

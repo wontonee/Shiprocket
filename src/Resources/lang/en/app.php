@@ -5,6 +5,7 @@ return [
         'menu' => [
             'shiprocket' => 'Shiprocket',
             'shipment' => 'Shipments',
+            'courier' => 'Courier',
             'channel' => 'Channel',
             'pickup' => 'Pickup',
             'settings' => 'Settings',
@@ -32,6 +33,9 @@ return [
             'cancel-confirm' => 'Are you sure you want to cancel this order in Shiprocket?',
             'cancel-success' => 'Order has been successfully cancelled in Shiprocket.',
             'cancel-error' => 'Failed to cancel order in Shiprocket.',
+            'channel-missing' => 'Please select the channel.',
+            'pickup-location-missing' => 'Please select the pickup location.',
+             'duplicate-request'=> 'Duplicate request. Please check the order ID.',
         ],
         'sales' => [
             'orders' => [
