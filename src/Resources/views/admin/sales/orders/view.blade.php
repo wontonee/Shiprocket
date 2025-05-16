@@ -34,11 +34,27 @@
     <div class="mt-5 flex-wrap items-center justify-between gap-x-1 gap-y-2">
         <div class="flex gap-1.5">
             @if($shiprocketOrder->status !== 'CANCELED')
+            {{-- Order cancellation --}}
                 <a href="{{ route('admin.shiprocket.orders.cancel', $order->id) }}"
                    onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.cancel-confirm') }}')"
-                   class="transparent-button px-1 py-1.5 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800">
-                    <span class="icon-cancel text-2xl"></span>
+                   class="bg-red-100 text-red-700 px-3 py-2 rounded shadow hover:bg-red-200 focus:ring-2 focus:ring-red-400 focus:outline-none transition">
                     {{ __('shiprocket::app.admin.sales.orders.cancel') }}
+                </a>
+                <a href="{{ route('admin.shiprocket.orders.create.awb', $order->id) }}"
+                   onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.create-awb-confirm') }}')"
+                   class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                    {{ __('shiprocket::app.admin.sales.orders.create-awb') }}
+                </a>
+                <a href="{{ route('admin.shiprocket.orders.shipment-cancel', $order->id) }}"
+                   onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.cancel-shipment-confirm') }}')"
+                   class="bg-yellow-500 text-white px-3 py-2 rounded shadow hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition">
+                    {{ __('shiprocket::app.admin.sales.orders.shipment-cancel') }}
+                </a>
+
+                <a href="{{ route('admin.shiprocket.orders.cancel', $order->id) }}"
+                   onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.cancel-confirm') }}')"
+                   class="bg-green-600 text-white px-3 py-2 rounded shadow hover:bg-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none transition">
+                    {{ __('shiprocket::app.admin.sales.orders.pickup-request') }}
                 </a>
             @endif
         </div>

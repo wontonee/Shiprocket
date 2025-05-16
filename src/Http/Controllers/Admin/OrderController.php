@@ -12,6 +12,7 @@ use Webkul\Sales\Repositories\OrderAddressRepository;
 use Wontonee\Shiprocket\Models\ShiprocketOrder;
 use Wontonee\Shiprocket\Sdk\Client\Client;
 use Webkul\Core\Models\CoreConfig;
+use Illuminate\Support\Facades\Log;
 
 
 class OrderController extends Controller
@@ -78,7 +79,12 @@ class OrderController extends Controller
         $client = new Client($apiUsername, $apiPassword);
 
         // Prepare order data for Shiprocket
-        $orderData = $this->prepareOrderData($order);
+        try {
+            $orderData = $this->prepareOrderData($order);
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+            return redirect()->back();
+        }
 
         // For debugging - dump the order data to the screen
         // Uncomment the lines below for debugging
@@ -95,16 +101,14 @@ class OrderController extends Controller
 
         // Create order in Shiprocket
         $response = $client->orders->createadhocorder($orderData);
-
         if (isset($response['order_id'])) {
             // Create local record of Shiprocket order
             ShiprocketOrder::create([
                 'order_id' => $orderId,
+                'shiprocket_shipment_id' => $response['id'],
                 'shiprocket_order_id' => $response['order_id'],
                 'status' => $response['status'] ?? 'NEW',
             ]);
-
-
             session()->flash('success', __('shiprocket::app.admin.orders.create-success'));
         } else {
             // Format detailed error message if available
@@ -125,7 +129,7 @@ class OrderController extends Controller
             }
 
             // Log the error response with detailed information
-            \Log::error('Shiprocket Order Creation Failed', [
+            Log::error('Shiprocket Order Creation Failed', [
                 'order_id' => $orderId,
                 'response' => $response,
                 'request_data' => $orderData
@@ -236,6 +240,49 @@ class OrderController extends Controller
             }
 
             return redirect()->back();
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Create AWB for an order
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createAWB($orderId)
+    {
+
+        try {
+            // Find the local Shiprocket order
+            $shiprocketOrder = ShiprocketOrder::where('order_id', $orderId)->firstOrFail();
+
+            // Get Shiprocket API credentials
+            $apiUsername = optional(CoreConfig::where('code', 'shiprocket.api_username')->first())->value;
+            $apiPassword = optional(CoreConfig::where('code', 'shiprocket.api_password')->first())->value;
+
+            if (!$apiUsername || !$apiPassword) {
+                session()->flash('error', __('shiprocket::app.admin.orders.missing-credentials'));
+                return redirect()->back();
+            }
+            // Initialize Shiprocket client
+            $client = new Client($apiUsername, $apiPassword);
+            // Ensure we have a clean order ID (convert objects to strings if needed)
+            $shipRocketOrderId = is_object($shiprocketOrder->shiprocket_order_id)
+                ? $shiprocketOrder->shiprocket_order_id->__toString()
+                : $shiprocketOrder->shiprocket_order_id;
+            // Make sure it's a clean value - ensure it's a string and has only numeric characters
+            $cleanOrderId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketOrderId));
+            // Prepare order ID for cancellation - the SDK expects an array of IDs directly
+            $orderIds = [$cleanOrderId];
+
+            $response =$client->courier->createAWB($orderIds);
+
+            dd($response);
+
+           
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
             return redirect()->back();
@@ -399,29 +446,24 @@ class OrderController extends Controller
 
         $currentChannelId = CoreConfig::where('code', 'shiprocket.shipping.channel_id')->first();
 
-        if (!empty($currentChannelId)) {
-            $currentChannelId = (string) $currentChannelId->value;
-        } else {
-            session()->flash('error', __('shiprocket::app.admin.orders.channel-missing'));
-            return redirect()->back();
+        if (empty($currentChannelId) || is_null($currentChannelId->value)) {
+            throw new \Exception(__('shiprocket::app.admin.orders.channel-missing'));
         }
+
+        $currentChannelId = (string) $currentChannelId->value;
 
         // check the pickup location
         $pickupLocation = CoreConfig::where('code', 'shiprocket.shipping.pickup_location_name')->first();
-        if (!empty($pickupLocation)) {
-            $pickupLocation = (string) $pickupLocation->value;
-        } else {
-            session()->flash('error', __('shiprocket::app.admin.orders.pickup-location-missing'));
-            return redirect()->back();
+        if (empty($pickupLocation) || is_null($pickupLocation->value)) {
+            throw new \Exception(__('shiprocket::app.admin.orders.pickup-location-missing'));
         }
-
-
+        $pickupLocation = (string) $pickupLocation->value;
 
         // Prepare order data for Shiprocket according to their API documentation
         $orderData = [
             'order_id' => (string)$order->increment_id,
             'order_date' => $order->created_at->format('Y-m-d H:i'),
-            'pickup_location' => 'work',
+            'pickup_location' => $pickupLocation,
             'channel_id' => $currentChannelId,
             'comment' => 'Order from ' . config('app.name'),
             'billing_customer_name' => $billingNameParts['first_name'],

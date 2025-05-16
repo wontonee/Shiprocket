@@ -1,12 +1,15 @@
 {
   "name": "wontonee/shiprocket",
-  "description": "Shiprocket integration for Bagisto",
+  "description": "Shiprocket integration for Bagisto to manage shipments, track orders, and automate logistics from your admin panel.",
+  "version": "1.0.0",
   "type": "bagisto-module",
   "license": "MIT",
   "authors": [
     {
       "name": "Saju Gopal",
-      "email": "saju.g@wontonetech.com"
+      "email": "saju@wontonee.com",
+      "homepage": "https://wontonetech.com",
+      "role": "Developer"
     }
   ],
   "require": {
@@ -30,6 +33,18 @@
       "@php artisan vendor:publish --tag=public --force"
     ]
   },
+  "support": {
+    "email": "saju@wontonee.com",
+    "issues": "https://www.wontonee.com"
+  },
+  "keywords": [
+    "bagisto",
+    "shiprocket",
+    "laravel",
+    "ecommerce",
+    "logistics",
+    "shipment"
+  ],
   "minimum-stability": "dev",
   "prefer-stable": true
 }
