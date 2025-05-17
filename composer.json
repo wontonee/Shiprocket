@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": "^8.1",
-    "bagisto/bagisto": "^2.0"
+    "bagisto/bagisto": ">=2.2"
   },
   "autoload": {
     "psr-4": {
