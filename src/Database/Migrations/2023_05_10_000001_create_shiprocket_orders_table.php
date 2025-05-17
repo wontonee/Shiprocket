@@ -17,7 +17,6 @@ return new class extends Migration
         
         Schema::create('shiprocket_orders', function (Blueprint $table) use ($orderIdType) {
             $table->id();
-            
             // Match the order_id column type to the id column in orders
             if ($orderIdType == 'bigint') {
                 // Need to make it unsigned if the orders.id is unsigned
@@ -27,15 +26,17 @@ return new class extends Migration
             } else {
                 $table->unsignedBigInteger('order_id');
             }
-            
             $table->string('shiprocket_order_id')->nullable();
             $table->string('shiprocket_shipment_id')->nullable();
             $table->string('status')->nullable();
             $table->string('tracking_number')->nullable();
             $table->string('courier_name')->nullable();
             $table->string('awb_code')->nullable();
+            $table->integer('awb_status')->nullable();
+            $table->string('pickup_status')->nullable();
+            $table->dateTime('pickup_scheduled_date')->nullable();
+            $table->string('pickup_note')->nullable();
             $table->timestamps();
-
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
     }

@@ -86,26 +86,13 @@ class OrderController extends Controller
             return redirect()->back();
         }
 
-        // For debugging - dump the order data to the screen
-        // Uncomment the lines below for debugging
-        /*
-        echo '<h2>Debug: Order Data Being Sent to Shiprocket</h2>';
-        echo '<pre>' . json_encode($orderData, JSON_PRETTY_PRINT) . '</pre>';
-        
-        // Show the token being used
-        echo '<h2>API Token Used:</h2>';
-        echo '<pre>' . $client->getToken() . '</pre>';
-        
-        exit; // Stop execution here for debugging
-        */
-
         // Create order in Shiprocket
         $response = $client->orders->createadhocorder($orderData);
         if (isset($response['order_id'])) {
             // Create local record of Shiprocket order
             ShiprocketOrder::create([
                 'order_id' => $orderId,
-                'shiprocket_shipment_id' => $response['id'],
+                'shiprocket_shipment_id' => $response['shipment_id'],
                 'shiprocket_order_id' => $response['order_id'],
                 'status' => $response['status'] ?? 'NEW',
             ]);
@@ -270,23 +257,135 @@ class OrderController extends Controller
             // Initialize Shiprocket client
             $client = new Client($apiUsername, $apiPassword);
             // Ensure we have a clean order ID (convert objects to strings if needed)
-            $shipRocketOrderId = is_object($shiprocketOrder->shiprocket_order_id)
-                ? $shiprocketOrder->shiprocket_order_id->__toString()
-                : $shiprocketOrder->shiprocket_order_id;
+            $shipRocketShipmentId = is_object($shiprocketOrder->shiprocket_shipment_id)
+                ? $shiprocketOrder->shiprocket_shipment_id->__toString()
+                : $shiprocketOrder->shiprocket_shipment_id;
             // Make sure it's a clean value - ensure it's a string and has only numeric characters
-            $cleanOrderId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketOrderId));
+            $cleanShipmentId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketShipmentId));
             // Prepare order ID for cancellation - the SDK expects an array of IDs directly
-            $orderIds = [$cleanOrderId];
+            $shipmentIds = [$cleanShipmentId];
 
-            $response =$client->courier->createAWB($orderIds);
+            $response = $client->courier->createAWB($shipmentIds);
 
-            dd($response);
-
-           
+            if ($response['awb_assign_status'] == 1) {
+                // save the data to the database
+                $data = $response['response']['data'] ?? [];
+                $shiprocketOrder->awb_code = $data['awb_code'] ?? null;
+                $shiprocketOrder->shiprocket_shipment_id = $data['shipment_id'] ?? null;
+                $shiprocketOrder->courier_name = $data['courier_name'] ?? null;
+                $shiprocketOrder->awb_status = $data['awb_code_status'] ?? null;
+                $shiprocketOrder->update();
+                session()->flash('success', __('shiprocket::app.admin.orders.create-awb-success'));
+                return redirect()->back();
+            } else {
+                session()->flash('error', $response['message']);
+                return redirect()->back();
+            }
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
             return redirect()->back();
         }
+    }
+
+    /**
+     * Cancel a shipment
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function cancelShipment($orderId)
+    {
+        try {
+            // Find the local Shiprocket order
+            $shiprocketOrder = ShiprocketOrder::where('order_id', $orderId)->firstOrFail();
+
+            // Get Shiprocket API credentials
+            $apiUsername = optional(CoreConfig::where('code', 'shiprocket.api_username')->first())->value;
+            $apiPassword = optional(CoreConfig::where('code', 'shiprocket.api_password')->first())->value;
+
+            if (!$apiUsername || !$apiPassword) {
+                session()->flash('error', __('shiprocket::app.admin.orders.missing-credentials'));
+                return redirect()->back();
+            }
+            // Initialize Shiprocket client
+            $client = new Client($apiUsername, $apiPassword);
+            // Ensure we have a clean order ID (convert objects to strings if needed)
+            $shipRocketAwbId = is_object($shiprocketOrder->awb_code)
+                ? $shiprocketOrder->awb_code->__toString()
+                : $shiprocketOrder->awb_code;
+            // Make sure it's a clean value - ensure it's a string and has only numeric characters
+            $cleanAwbId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketAwbId));
+            // Prepare order ID for cancellation - the SDK expects an array of IDs directly
+            $awbIds = [$cleanAwbId];
+
+            $response = $client->shipment->cancel($awbIds);
+
+            if ($response['message'] == "Bulk Shipment cancellation is in progress. Please wait for some time.") {
+                // save the data to the database
+                $shiprocketOrder->status = 'CANCELED';
+                $shiprocketOrder->update();
+                session()->flash('success', __('shiprocket::app.admin.orders.cancel-success'));
+                return redirect()->back();
+            } else if ($response['message'] == "AWB number is already cancelled.") {
+                session()->flash('error', __('shiprocket::app.admin.orders.cancel-error'));
+                return redirect()->back();
+            } else {
+                session()->flash('error', $response['message']);
+                return redirect()->back();
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Pick up request
+     */
+    public function pickupRequest($orderId)
+    {
+        try {
+            // Find the local Shiprocket order
+            $shiprocketOrder = ShiprocketOrder::where('order_id', $orderId)->firstOrFail();
+
+            // Get Shiprocket API credentials
+            $apiUsername = optional(CoreConfig::where('code', 'shiprocket.api_username')->first())->value;
+            $apiPassword = optional(CoreConfig::where('code', 'shiprocket.api_password')->first())->value;
+
+            if (!$apiUsername || !$apiPassword) {
+                session()->flash('error', __('shiprocket::app.admin.orders.missing-credentials'));
+                return redirect()->back();
+            }
+            // Initialize Shiprocket client
+            $client = new Client($apiUsername, $apiPassword);
+            // Ensure we have a clean order ID (convert objects to strings if needed)
+              $shipRocketShipmentId = is_object($shiprocketOrder->shiprocket_shipment_id)
+                ? $shiprocketOrder->shiprocket_shipment_id->__toString()
+                : $shiprocketOrder->shiprocket_shipment_id;
+            // Make sure it's a clean value - ensure it's a string and has only numeric characters
+            $cleanShipmentId = trim(preg_replace('/[^0-9]/', '', (string)$shipRocketShipmentId));
+            // Prepare order ID for cancellation - the SDK expects an array of IDs directly
+            $shipmentIds = [$cleanShipmentId];
+
+            $response = $client->courier->createPickup($shipmentIds);
+
+            if ($response['pickup_status'] == 1) {
+                // Save the pickup request data to the database
+                $shiprocketOrder->pickup_status = $response['pickup_status'] ?? null;
+                $shiprocketOrder->pickup_scheduled_date = $response['response']['pickup_scheduled_date'] ?? null;
+                $shiprocketOrder->pickup_note = $response['response']['data'] ?? null;
+                $shiprocketOrder->update();
+               
+                session()->flash('success', __('shiprocket::app.admin.orders.create-pickup-success'));
+                return redirect()->back();
+            } else {
+                session()->flash('error', $response['message']);
+                return redirect()->back();
+            }
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+            return redirect()->back();
+        }   
     }
 
     /**

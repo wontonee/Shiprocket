@@ -62,6 +62,8 @@ class SettingsController extends Controller
             'license_key'  => 'required|string',
         ]);
 
+        // License key validation
+
         CoreConfig::updateOrCreate(
             ['code' => 'shiprocket.api_username'],
             ['value' => $request->api_username]

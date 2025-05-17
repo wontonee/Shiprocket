@@ -70,7 +70,7 @@ class Shipment
 
         try {
             $response = Http::withToken($this->token)
-                ->post($this->apiUrl . 'orders/create/adhoc', $awbs);
+                ->post($this->apiUrl . 'orders/cancel/shipment/awbs', $awbs);
             
             if ($response->successful()) {
                 return $response->json();

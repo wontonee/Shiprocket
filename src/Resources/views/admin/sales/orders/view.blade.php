@@ -45,17 +45,19 @@
                    class="bg-blue-600 text-white px-3 py-2 rounded shadow hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
                     {{ __('shiprocket::app.admin.sales.orders.create-awb') }}
                 </a>
+                @if($shiprocketOrder->awb_status == 1)
                 <a href="{{ route('admin.shiprocket.orders.shipment-cancel', $order->id) }}"
                    onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.cancel-shipment-confirm') }}')"
                    class="bg-yellow-500 text-white px-3 py-2 rounded shadow hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition">
                     {{ __('shiprocket::app.admin.sales.orders.shipment-cancel') }}
                 </a>
-
-                <a href="{{ route('admin.shiprocket.orders.cancel', $order->id) }}"
-                   onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.cancel-confirm') }}')"
+               
+                <a href="{{ route('admin.shiprocket.orders.pickup', $order->id) }}"
+                   onclick="return confirm('{{ __('shiprocket::app.admin.sales.orders.confirm-pickup') }}')"
                    class="bg-green-600 text-white px-3 py-2 rounded shadow hover:bg-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none transition">
                     {{ __('shiprocket::app.admin.sales.orders.pickup-request') }}
                 </a>
+                 @endif
             @endif
         </div>
 
@@ -74,8 +76,13 @@
                     <x-slot:content>
                         <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <p class="text-sm text-gray-500 dark:text-gray-300 font-medium">Shiprocket Order ID</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-300 font-medium">Order ID</p>
                                 <p class="text-sm text-gray-800 dark:text-white">{{ $shiprocketOrder->shiprocket_order_id }}</p>
+                            </div>
+
+                              <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-300 font-medium">Shipment Id</p>
+                                <p class="text-sm text-gray-800 dark:text-white">{{ $shiprocketOrder->shiprocket_shipment_id }}</p>
                             </div>
 
                             <div>

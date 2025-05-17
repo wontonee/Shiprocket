@@ -44,7 +44,7 @@ class Courier
      * Create shipment pickup request
      * @param int $shipmentId shipment id
      */
-    public function createPickup(int $shipmentId): array    
+    public function createPickup(array $shipmentId): array    
     {
           $this->validate('Token', '');
         try {

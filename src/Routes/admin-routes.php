@@ -37,7 +37,8 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => 'admin/shiprocket'],
   Route::get('orders/view/{id}', [OrderController::class, 'view'])->name('admin.shiprocket.orders.view');
   Route::get('orders/cancel/{id}', [OrderController::class, 'cancelOrder'])->name('admin.shiprocket.orders.cancel');
   Route::get('orders/create-awb/{id}', [OrderController::class, 'createAWB'])->name('admin.shiprocket.orders.create.awb');
-  Route::get('orders/shipment-cancel/{id}', [OrderController::class, 'shipmentCancel'])->name('admin.shiprocket.orders.shipment-cancel');
+  Route::get('orders/shipment-cancel/{id}', [OrderController::class, 'cancelShipment'])->name('admin.shiprocket.orders.shipment-cancel');
+  Route::get('orders/pickup/{id}', [OrderController::class, 'pickupRequest'])->name('admin.shiprocket.orders.pickup');
 
 
   //Route::get('shipment/data', [ShiprocketController::class, 'getShipmentData'])->name('admin.shiprocket.shipment.data');

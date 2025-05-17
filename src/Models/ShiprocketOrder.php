@@ -16,7 +16,11 @@ class ShiprocketOrder extends Model
         'status',
         'tracking_number',
         'courier_name',
-        'awb_code'
+        'awb_code',
+        'pickup_status',
+        'awb_status',
+        'pickup_scheduled_date',
+        'pickup_note',
     ];
 
     /**
