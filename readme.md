@@ -70,7 +70,7 @@ After entering your credentials:
 
 ## 📋 Requirements
 
-- Bagisto version: `^2.0`
+- Bagisto version: `^2.2`
 - PHP version: `^8.1`
 - Valid License Key from [Wontonee](https://myapps.wontonee.com)
 
