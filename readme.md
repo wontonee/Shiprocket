@@ -85,7 +85,7 @@ After entering your credentials:
 
 ## 📬 Support
 
-- Email: [support@wontonetech.com](mailto:dev@wontonee.com)
+- Email: [dev@wontonee.com](mailto:dev@wontonee.com)
 - Issues: [GitHub Issues](https://github.com/wontonee/shiprocket/issues)
 
 ---
