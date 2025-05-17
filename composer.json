@@ -1,7 +1,6 @@
 {
   "name": "wontonee/shiprocket",
   "description": "Shiprocket integration for Bagisto to manage shipments, track orders, and automate logistics from your admin panel.",
-  "version": "1.0.2",
   "type": "bagisto-module",
   "license": "MIT",
   "authors": [
