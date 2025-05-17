@@ -79,13 +79,13 @@ After entering your credentials:
 ## 🧑‍💻 Developed By
 
 **Saju Gopal**  
-[Wontonee DigitalCraft LLP](https://wontonetech.com)
+[Wontonee DigitalCraft LLP](https://wontonee.com)
 
 ---
 
 ## 📬 Support
 
-- Email: [support@wontonetech.com](mailto:support@wontonetech.com)
+- Email: [support@wontonetech.com](mailto:dev@wontonee.com)
 - Issues: [GitHub Issues](https://github.com/wontonee/shiprocket/issues)
 
 ---
