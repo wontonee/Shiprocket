@@ -10,6 +10,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Wontonee\Shiprocket\DataGrids\ShipmentDataGrid;
 use Webkul\Core\Models\CoreConfig;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class SettingsController extends Controller
 {
@@ -61,6 +62,21 @@ class SettingsController extends Controller
             'api_password' => 'required|string',
             'license_key'  => 'required|string',
         ]);
+
+        // before saving, validate the license key
+        $response = Http::post('https://licenseapp.test/api/process-shiprocket-data', [
+            'license' => $request->license_key,
+            'product_id' => "ShiprocketBagisto",
+        ]);
+
+        $data = $response->json();
+        if (isset($data['status']) && $data['status'] === 'valid') {
+            // Proceed to save settings
+        } elseif (isset($data['error'])) {
+            return redirect()->back()->with('error', $data['error']);
+        } else {
+            return redirect()->back()->with('error', 'Unexpected response from license server.');
+        }
 
         // License key validation
 

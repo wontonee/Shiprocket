@@ -75,6 +75,11 @@
                         v-model="formData.license" 
                         required
                     >
+                    <div class="mt-2">
+                        <div class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 px-4 py-2 rounded text-sm">
+                            <strong>Note:</strong> For regular updates and support, please use only a <b>valid license key</b>.
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="flex justify-between mt-10 pt-4">
