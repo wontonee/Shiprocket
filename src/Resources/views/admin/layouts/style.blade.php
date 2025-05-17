@@ -16,4 +16,6 @@
 
 @if ($viteCss)
     <link rel="stylesheet" href="{{ asset('themes/shiprocket/default/build/' . $viteCss) }}">
+    @else
+        <link rel="stylesheet" href="{{ asset('themes/shiprocket/default/build/css/app.css') }}">
 @endif
