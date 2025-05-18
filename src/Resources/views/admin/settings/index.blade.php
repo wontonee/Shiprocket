@@ -4,7 +4,7 @@
         Settings
     </x-slot>
     <!-- Page Content -->
-    <div class="page-content">
+    <div class="page-content  shiprocket-wrapper">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Settings</h1>
         <div class="w-full bg-white rounded-lg shadow-md p-8 mb-8">
             <div id="shiprocket-settings-app" class="max-w-4xl mx-auto py-4">
@@ -15,12 +15,6 @@
                     :action="{{ json_encode(route('admin.shiprocket.settings.save')) }}"
                     :csrf-token="{{ json_encode(csrf_token()) }}"
                 ></v-shiprocket-settings>
-                
-                <!-- Vue Test Component -->
-                <div class="mt-10 pt-8 border-t border-gray-200 hidden">
-                    <h3 class="text-lg font-medium text-gray-800 mb-4">Vue Component Test</h3>
-                    <v-test-button></v-test-button>
-                </div>
             </div>
         </div>
     </div>
@@ -76,9 +70,14 @@
                         required
                     >
                     <div class="mt-2">
-                        <div class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 px-4 py-2 rounded text-sm">
-                            <strong>Note:</strong> For regular updates and support, please use only a <b>valid license key</b>.
-                        </div>
+                     <div style="background-color: #fef9c3; border-left: 4px solid #facc15; color: #854d0e; padding: 0.5rem 1rem; border-radius: 0.25rem; font-size: 0.875rem;">
+    <strong>Note:</strong> For regular updates and support, please use only a <b>valid license key</b>.
+</div>
+                    <div class="mt-2 text-sm text-gray-500">
+                        If you don't have a license key, please visit our 
+                        <a href="https://myapps.wontonee.com" target="_blank" class="text-blue-600 hover:underline">website</a> to purchase one.   
+                    </div>
+
                     </div>
                 </div>
                 
@@ -194,7 +193,5 @@
                 }
             });
         </script>
-        
-
     @endPushOnce
 </x-admin::layouts>

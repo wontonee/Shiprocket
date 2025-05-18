@@ -8,6 +8,7 @@ use Wontonee\Shiprocket\Sdk\Resources\Orders;
 use Wontonee\Shiprocket\Sdk\Resources\Pickup;
 use Wontonee\Shiprocket\Sdk\Resources\Channel;
 use Wontonee\Shiprocket\Sdk\Resources\Courier;
+use Wontonee\Shiprocket\Sdk\Resources\Tracking;
 
 class Client
 {
@@ -20,6 +21,7 @@ class Client
     public $pickup;
     public $channel;
     public $courier;
+    public $tracking;
 
     public function __construct($email, $password)
     {
@@ -31,6 +33,7 @@ class Client
         $this->pickup = new Pickup($this->token);
         $this->channel = new Channel($this->token);
         $this->courier = new Courier($this->token);
+        $this->tracking = new Tracking($this->token);
 
     }
 }
