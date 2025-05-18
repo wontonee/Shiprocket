@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* ✅ Always keep @font-face outside @layer */
 @font-face {
   font-family: 'icomoon';
@@ -17,12 +13,4 @@
   display: inline-block;
   font-size: 1.5rem;
   line-height: 1;
-}
-
-/* ✅ Inside @layer ONLY use Tailwind-aware selectors */
-@layer components {
-  html.dark [class^="icon-"],
-  html.dark [class*=" icon-"] {
-    color: #d1d5db;
-  }
 }
