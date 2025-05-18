@@ -9,8 +9,16 @@ export default defineConfig(({ mode }) => {
     Object.assign(process.env, loadEnv(mode, envDir));
 
     return {
-        build: {
+         build: {
             emptyOutDir: true,
+            outDir: "src/public/build", 
+            manifest: true,
+            rollupOptions: {
+                input: {
+                    app: "src/Resources/assets/js/app.js",
+                    style: "src/Resources/assets/css/app.css",
+                },
+            },
         },
 
         envDir,

@@ -1,0 +1,36 @@
+{
+  "src/Resources/assets/css/app.css": {
+    "file": "assets/app-cf6d92d1.css",
+    "isEntry": true,
+    "src": "src/Resources/assets/css/app.css"
+  },
+  "src/Resources/assets/fonts/icomoon.eot": {
+    "file": "assets/icomoon-09cef9ca.eot",
+    "src": "src/Resources/assets/fonts/icomoon.eot"
+  },
+  "src/Resources/assets/fonts/icomoon.svg": {
+    "file": "assets/icomoon-2748741a.svg",
+    "src": "src/Resources/assets/fonts/icomoon.svg"
+  },
+  "src/Resources/assets/fonts/icomoon.ttf": {
+    "file": "assets/icomoon-9ced1cce.ttf",
+    "src": "src/Resources/assets/fonts/icomoon.ttf"
+  },
+  "src/Resources/assets/fonts/icomoon.woff": {
+    "file": "assets/icomoon-adb45a41.woff",
+    "src": "src/Resources/assets/fonts/icomoon.woff"
+  },
+  "src/Resources/assets/images/icon-temp-active.svg": {
+    "file": "assets/icon-temp-active-11bdd3e2.svg",
+    "src": "src/Resources/assets/images/icon-temp-active.svg"
+  },
+  "src/Resources/assets/images/icon-temp.svg": {
+    "file": "assets/icon-temp-def6bd06.svg",
+    "src": "src/Resources/assets/images/icon-temp.svg"
+  },
+  "src/Resources/assets/js/app.js": {
+    "file": "assets/app-4ed993c7.js",
+    "isEntry": true,
+    "src": "src/Resources/assets/js/app.js"
+  }
+}

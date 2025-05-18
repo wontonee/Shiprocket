@@ -37,7 +37,7 @@ return new class extends Migration
             $table->dateTime('pickup_scheduled_date')->nullable();
             $table->string('pickup_note')->nullable();
             $table->timestamps();
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+           // $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
     }
 

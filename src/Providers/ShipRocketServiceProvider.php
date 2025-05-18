@@ -16,7 +16,7 @@ class ShiprocketServiceProvider extends ServiceProvider
     public function boot()
     {
 
-       
+
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->loadRoutesFrom(__DIR__ . '/../Routes/admin-routes.php');
@@ -27,20 +27,14 @@ class ShiprocketServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'shiprocket');
 
-          $this->publishes([
-           __DIR__ . '/../Resources/assets' => public_path('themes/shiprocket/default/build'),
-          ], 'public');
 
-        // Publish fonts & css
-      //  $this->publishes([
-        //    __DIR__ . '/../Resources/assets/fonts' => public_path('vendor/shiprocket/fonts'),
-          //  __DIR__ . '/../Resources/assets/css'   => public_path('vendor/shiprocket/css'),
-      //  ], 'public');
-
+        $this->publishes([
+            __DIR__ . '/../public/build' => public_path('themes/shiprocket/default/build'),
+        ], 'shiprocket-assets');
+     
 
         Event::listen('bagisto.admin.layout.head.after', function ($viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('shiprocket::admin.layouts.style');
-            
         });
 
         Event::listen('bagisto.admin.sales.order.page_action.after', function ($viewRenderEventManager) {

@@ -210,7 +210,7 @@ class ShipmentDataGrid extends DataGrid
         $this->addColumn([
             'index'      => 'grand_total',
             'label'      => trans('shiprocket::app.admin.sales.shipments.datagrid.amount'),
-            'type'       => 'decimal',
+            'type'       => (strpos(core()->version(), '2.2') === 0 ? 'string' : 'decimal'),
             'searchable' => false, // Disabled search
             'filterable' => true,
             'sortable'   => true,

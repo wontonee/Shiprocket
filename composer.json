@@ -27,8 +27,14 @@
     }
   },
   "scripts": {
+    "post-install-cmd": [
+      "@php artisan vendor:publish --tag=shiprocket-assets --force"
+    ],
+    "post-update-cmd": [
+      "@php artisan vendor:publish --tag=shiprocket-assets --force"
+    ],
     "post-autoload-dump": [
-      "@php artisan vendor:publish --tag=public --force"
+      "@php artisan vendor:publish --tag=shiprocket-assets --force"
     ]
   },
   "support": {
