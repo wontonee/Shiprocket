@@ -22,7 +22,7 @@ class Tracking
      * @param string $identifier
      * @return array
      */
-    public function fetchByAwb(array $awbnumber): array
+    public function fetchByAwb($awbnumber): array
     {
         $this->validate('Token', '');
 
@@ -46,7 +46,7 @@ class Tracking
      * @param int $shipmentId
      * @return array
      */
-    public function fetchByShipmentId(int $shipmentId): array
+    public function fetchByShipmentId($shipmentId): array
     {
         $this->validate('Token', '');
 
