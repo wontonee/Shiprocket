@@ -26,12 +26,19 @@ composer require wontonee/shiprocket
 ### Step 2: Publish the Package
 
 ```bash
-php artisan vendor:publish --provider="Wontonee\\Shiprocket\\Providers\\ShiprocketServiceProvider"
+php artisan vendor:publish --tag=shiprocket-assets
+```
+---
+
+### Step 3: Migrate Shiprocket Table
+
+```bash
+php artisan migrate
 ```
 
 ---
 
-### Step 3: Optimize Application
+### Step 4: Optimize Application
 
 ```bash
 php artisan optimize
@@ -39,13 +46,13 @@ php artisan optimize
 
 ---
 
-### Step 4: Get Your License Key
+### Step 5: Get Your License Key
 
 Visit [https://myapps.wontonee.com](https://myapps.wontonee.com) and create a free or paid license key for Shiprocket integration.
 
 ---
 
-### Step 5: Configure in Admin Panel
+### Step 6: Configure in Admin Panel
 
 1. Log in to your Bagisto admin panel.
 2. Go to:  
@@ -57,7 +64,7 @@ Visit [https://myapps.wontonee.com](https://myapps.wontonee.com) and create a fr
 
 ---
 
-### Step 6: Set Up Channel & Pickup Details
+### Step 7: Set Up Channel & Pickup Details
 
 After entering your credentials:
 
